@@ -1,5 +1,4 @@
 <template>
-  <!-- 메인 -->
   <main class="mt-3">
     <div class="container">
       <div class="row mb-2">
@@ -15,15 +14,15 @@
       <div class="row g-3">
         <div class="col-xl-3 col-lg-4 col-md-6" :key="i" v-for="(product, i) in productList">
           <div class="card" style="width: 18rem">
-            <a href="product_detail.html"><img :src="product.path" class="card-img-top" alt="keyboard"/></a>
+            <a @click="goToDetail(product.id)" style="cursor:pointer;"><img :src="product.path" class="card-img-top" alt="keyboard"/></a>
             <div class="card-body">
               <h5 class="card-title">
                 <h5>{{ product.product_name }}</h5>
               </h5>
               <p class="card-text">
-                <span class="badge bg-dark text-white mr-1">{{ product.category1 }}</span>
-                <span class="badge bg-dark text-white mr-1">{{ product.category2 }}</span>
-                <span class="badge bg-dark text-white mr-1">{{ product.category3 }}</span>
+                <span class="badge bg-dark text-white me-1">{{ product.category1 }}</span>
+                <span class="badge bg-dark text-white me-1">{{ product.category2 }}</span>
+                <span class="badge bg-dark text-white me-1">{{ product.category3 }}</span>
               </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group" role="group">
@@ -58,6 +57,9 @@ export default {
     async getProductList() {
       this.productList = await this.$api('/api/productList', {});
       console.log(this.productList);
+    },
+    goToDetail(product_id) {
+      this.$router.push({ path: '/detail', query: { product_id: product_id } });
     },
   },
 };
