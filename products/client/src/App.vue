@@ -28,12 +28,12 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/register">제품등록페이지</router-link>
             </li>
+            <li><button class="btn btn-danger" type="button" @click="kakaoLogin">로그인</button></li>
+            <!-- > 카카오 로그인 버튼 < -->
           </ul>
           <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
+            <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>
       </div>
@@ -103,6 +103,39 @@
     </footer>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    kakaoLogin() {
+      window.Kakao.Auth.login({
+        scope: 'profile, account_email, gender',
+        success: this.getProfile,
+      });
+    },
+    getProfile(authObj) {
+      console.log(authObj);
+      window.Kakao.API.request({
+        url: '/v2/user/me', //로그인 한 사람의 정보를 갖고 오는 것
+        success: (res) => {
+          const kakao_account = res.kakao_account; //account 정보를 갖고 옴
+          console.log(kakao_account);
+          this.login(kakao_account);
+          alert('로그인 성공!');
+        },
+      });
+    },
+    async login(kakao_account) {
+      await this.$api('/api/login', {
+        param: [{ email: kakao_account.email, nickname: kakao_account.profile.nickname }, { nickname: kakao_account.profile.nickname }],
+      });
+    },
+    kakaoLogout() {
+      window.Kakao.Auth.logout((response) => {});
+    },
+  },
+};
+</script>
 
 <style>
 #app {
