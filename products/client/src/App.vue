@@ -25,11 +25,13 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/detail">제품상세페이지</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="user.email != undefined" class="nav-item">
               <router-link class="nav-link" to="/register">제품등록페이지</router-link>
             </li>
-            <li><button class="btn btn-danger" type="button" @click="kakaoLogin">로그인</button></li>
             <!-- > 카카오 로그인 버튼 < -->
+            <li v-if="user.email == undefined"><button class="btn btn-danger" type="button" @click="kakaoLogin">로그인</button></li>
+            <!-- > 카카오 로그아웃 버튼 < -->
+            <li v-else><button class="btn btn-danger" type="button" @click="kakaoLogout">로그아웃</button></li>
           </ul>
           <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
@@ -106,6 +108,11 @@
 
 <script>
 export default {
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
   methods: {
     kakaoLogin() {
       window.Kakao.Auth.login({
@@ -129,9 +136,15 @@ export default {
       await this.$api('/api/login', {
         param: [{ email: kakao_account.email, nickname: kakao_account.profile.nickname }, { nickname: kakao_account.profile.nickname }],
       });
+
+      this.$store.commit('user', kakao_account); // 우리가 만든 store(vuex를 이용한 상태 관리 모듈)에다가 유저정보를 갱신
     },
     kakaoLogout() {
-      window.Kakao.Auth.logout((response) => {});
+      window.Kakao.Auth.logout((response) => {
+        console.log(response);
+        this.$store.commit('user', {});
+        alert('로그아웃');
+      });
     },
   },
 };
