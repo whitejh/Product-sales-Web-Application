@@ -5,6 +5,8 @@ vuex를 이용해서 status를 관리
 
 import { createStore } from 'vuex';
 
+import persistedstate from 'vuex-persistedstate';
+
 const store = createStore({
   state() {
     return {
@@ -16,6 +18,11 @@ const store = createStore({
       state.user = data;
     },
   },
+  plugins: [
+    persistedstate({
+      paths: ['user'],
+    }),
+  ],
 });
 
 export default store;
